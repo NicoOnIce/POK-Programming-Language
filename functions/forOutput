@@ -1,0 +1,3 @@
+extern GetStdHandle
+extern WriteConsoleA
+extern ExitProcess

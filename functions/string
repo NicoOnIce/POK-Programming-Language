@@ -1,0 +1,2 @@
+{STR_NAME} db "{VALUE}", 10
+{LEN_NAME} equ $ - {STR_NAME}

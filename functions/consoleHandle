@@ -1,0 +1,3 @@
+mov rcx, -11
+call GetStdHandle
+mov rbx, rax   

@@ -1,0 +1,21 @@
+output content
+outputs a string
+takes: content:STRING
+
+; TEXT
+creates a comment in the code
+
+- CODE
+indentation level used in the assemby result
+
+uvar type bytes name
+creates an undefined variables
+takes: type:STRING, bytes:INT, name:STRING
+
+var type name value
+creates a defined variable with a set value
+takes: type:STRING, name:STRING, value:[type]
+
+::var_name
+replaced with the value of the selected variable
+takes: var_name:STRING

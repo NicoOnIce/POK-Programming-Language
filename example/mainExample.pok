@@ -1,0 +1,9 @@
+- uvar string 100 myUndefinedString
+; the line above creates an undefined variable with the type string and 100 bytes of space for data
+
+- var string myDefinedString I am a string!
+; the line above creates a defined variable with the type string and a set value of "I am a string!"
+
+- output I have created my new, defined string variable!
+- output ::myDefinedString
+; the line above reads the myDefinedString variable and outputs it
