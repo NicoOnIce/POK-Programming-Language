@@ -1,0 +1,3 @@
+mov rax, [rel {INT_NAME1}]
+add rax, [rel {INT_NAME2}]
+mov [rel {INT_NAME1}], rax

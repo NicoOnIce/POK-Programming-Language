@@ -1,2 +1,2 @@
 {NAME} times {BYTES} db 0
-bytesRead dq 0 
+{BYTES_NAME} dq 0 

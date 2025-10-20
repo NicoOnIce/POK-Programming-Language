@@ -1,0 +1,3 @@
+mov al, byte [rel {BYTE_NAME1}]
+cmp al, [rel {BYTE_NAME2}]
+je {SUBROUTINE_NAME}

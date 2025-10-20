@@ -1,0 +1,1 @@
+mov byte [rel {BYTE_NAME}], {NEW_VALUE}

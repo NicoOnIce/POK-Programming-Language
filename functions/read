@@ -1,0 +1,7 @@
+mov rcx, rsi                
+lea rdx, [rel {BUFFER_NAME}]       
+mov r8d, 99                 
+lea r9, [rel {BYTES_NAME}]     
+sub rsp, 32                 
+call ReadConsoleA
+add rsp, 32

@@ -1,0 +1,4 @@
+movzx rcx, byte [rel {OFFSET}]
+lea r10, [rel {SOURCE_NAME}]
+mov al, [r10 + rcx]
+mov [rel {DESTINTION_NAME}], al
