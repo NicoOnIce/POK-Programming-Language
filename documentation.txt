@@ -1,21 +1,122 @@
-output content
-outputs a string
-takes: content:STRING
+- output
+Purpose: Prints or outputs a string value.
+Syntax: output <string> or output ::<user_variable>
+Description:
 
-; TEXT
-creates a comment in the code
+Defines a string in the .data section if it’s a literal.
 
-- CODE
-indentation level used in the assemby result
+Uses existing user-defined variable if referenced with "::".
 
-uvar type bytes name
-creates an undefined variables
-takes: type:STRING, bytes:INT, name:STRING
+Generates an "output" function call to display text.
 
-var type name value
-creates a defined variable with a set value
-takes: type:STRING, name:STRING, value:[type]
+- uvar
+Purpose: Declares a user-defined variable.
+Syntax: uvar string <bytes> <name>
+Description:
 
-::var_name
-replaced with the value of the selected variable
-takes: var_name:STRING
+Allocates an undefined string in the .data section.
+
+Registers variable names in userVariables["str"] and userVariables["int"].
+
+- set
+Purpose: Modifies the value of a variable.
+Syntax:
+
+set uvar <variable> <value>
+
+set resvar <type> <variable> <value>
+Description:
+
+Updates user-defined string or reserved variables.
+
+Supports "byte" and "string" variable types for resvar.
+
+- var
+Purpose: Declares a new initialized variable.
+Syntax:
+
+var string <name> <value>
+
+var int <name> <value>
+
+- read
+Purpose: Reads input into a string buffer.
+Syntax: read <variable>
+Description:
+
+Reads input into an existing user-defined string variable.
+
+- resvar
+Purpose: Declares a reserved variable (dynamic).
+Syntax:
+
+resvar int <name> <initial_value>
+
+resvar byte <name>
+
+resvar string <name> <bytes>
+
+- cresvar
+Purpose: Changes a reserved variable’s value.
+Syntax: cresvar <type> <value>
+
+- bcopy
+Purpose: Copies data from one buffer to another.
+Syntax: bcopy <source_str> <destination_byte> <offset>
+
+- subroutine
+Purpose: Defines a new subroutine.
+Syntax: subroutine <name>
+
+- if
+Purpose: Creates a conditional branch.
+Syntax:
+
+if <value1> i== <value2> <subroutine>
+; i== checks if two integers ar the same
+
+if <value1> b== <value2> <subroutine>
+; b== checks if two bytes are the same
+
+- finish
+Purpose: Finalizes and runs the main application.
+Syntax: finish
+
+- ret
+Purpose: Returns from the current subroutine.
+Syntax: ret
+
+- ;
+Purpose: Comment line.
+Syntax: ; <comment>
+Description:
+
+Ignored by the parser.
+
+- exit
+Purpose: Exits the program.
+Syntax: exit
+
+- add
+Purpose: Performs integer addition.
+Syntax: add <int1> <int2>
+Extra: the resulting integer is stored in <int1>
+
+- sub
+Purpose: Performs integer subtraction.
+Syntax: sub <int1> <int2>
+Extra: the resulting integer is stored in <int1>
+
+- inc
+Purpose: Initializes common constants.
+Syntax: inc <module>
+Current modules:
+booleans - Addes true and false constants
+
+-Embedded Subroutine Calls
+Syntax:
+<subroutine> << <instruction>
+<subroutine> run
+Description: 
+<< adds a line of code to a subroutine
+run runs a subroutine
