@@ -1,0 +1,86 @@
+; This code was created by NicoIce
+; Annotions by NicoIce
+; This code is meant to be ran with POK's newest version
+; https://github.com/NicoOnIce/pok-Coding-Language
+
+; The code bellow has been labeled and explained.
+; It's functionality is to check two strings against each other.
+; One of the strings is in put by the user.
+; The other string is preset.
+
+inc bytes
+; adds bytes (null and start)
+inc booleans
+; adds true (1), false (2), btrue ('1') and bfalse ('0')
+
+var string baseString base string b::13 b::10 b::0
+; creates a static string variable with the value: "base string", 13, 10, 0
+; otherwise written as: "base string\n\r\0"
+uvar string 20 inputString
+; creates a undefined static string variable with 20 bytes allocated
+
+resvar byte byteBuffer
+; creates a byte of free data and saves the pointer to the byte as byteBuffer
+resvar byte byteBuffer1
+; creates a byte of free data and saves the pointer to the byte as byteBuffer1
+resvar int index 0
+; reserves 8 bytes, saves the pointer as index and sets the value to 0
+
+subroutine check
+; creates a subroutine named "check"
+
+output enter a string bellow b::10 b::0
+; outputs the string above with the additional bytes "\n\0" (10, 0)
+read inputString
+; reads the input of the user from the console.
+; this input comes back as thier input + the bytes "\r\n" (13, 10)
+; this happens because, when enter is pressed in the console it is seen as (13, 10)
+check run
+; runs the "check" subroutine
+; this will set a return point
+exit
+; exits the application
+
+subroutine stringsMatch
+; creates a subroutine named "stringsMatch"
+stringsMatch << output strings match b::10 b::0
+; outputs the string above with the additional bytes "\n\0" (10, 0)
+stringsMatch << ret
+; returns back to the last return point, and removes it from the list of return points
+
+subroutine stringsDontMatch
+; cretes a subroutine named "stringsDontMatch"
+stringsDontMatch << output strings dont match b::10 b::0
+; outputs the string above with the additional bytes "\n\0" (10, 0)
+stringsDontMatch << ret
+; returns back to the last return point, and removes it from the list of return points
+
+subroutine endOfString1
+endOfString1 << if byteBuffer1 b== null stringsMatch
+; if the byte in byteBuffer1 is the same as the null byte
+; then it goes to the subroutine "stringsMatch" (this does not set a return point)
+endOfString1 << goto stringsDontMatch
+; goes directly to the subroutine stringsDontMatch (this does not set a return point)
+
+subroutine bytesMatch
+; creates a subroutine named "bytesMatch"
+bytesMatch << add index true
+; adds "true" (1) to "index" and stores the result value in "index"
+bytesMatch << goto check
+; goes directly to the subroutine check (this does not set a return point)
+; this creates a loop with check
+
+check << bcopy byteBuffer baseString index
+; copies the "index" byte of "baseString" into "byteBuffer"
+check << bcopy byteBuffer1 inputString index
+; copies the "index" byte of "inputString" into "byteBuffer1"
+check << if byteBuffer b== null endOfString1
+; if the byteBuffer byte is the same as null
+; then it goes to the subroutine endOfString1 (this does not set a return point)
+check << if byteBuffer b== byteBuffer1 bytesMatch
+; if the byteBuffer byte is the same as null
+; then it goes to the subroutine bytesMatch (this does not set a return point)
+; this creates a loop, as the subroutine bytesMatch includes "goto check"
+; which means, the after running bytesMatch, check will be ran again
+check << goto stringsDontMatch
+; goes directly to the subroutine stringsDontMatch (this does not set a return point)
