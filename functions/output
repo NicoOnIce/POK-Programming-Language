@@ -1,5 +1,5 @@
 mov rcx, rbx            
-lea rdx, [rel {STR_NAME}]     
+lea rdx, {STR_NAME}     
 mov r8d, {LEN_NAME}           
 xor r9d, r9d            
 call WriteConsoleA

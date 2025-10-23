@@ -1,1 +1,2 @@
-mov byte [rel {BYTE_NAME}], {NEW_VALUE}
+mov al, {NEW_VALUE}
+mov byte [rel {BYTE_NAME}], al

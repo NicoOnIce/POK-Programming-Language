@@ -1,1 +1,2 @@
-{VARIABLE_NAME} db {NEW_VALUE}, 10, 0
+mov al, [rel {VARIABLE_NAME}]
+mov byte [rel {NEW_VARIABLE}], al

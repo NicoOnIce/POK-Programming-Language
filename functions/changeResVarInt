@@ -1,1 +1,2 @@
-mov qword [rel {INT_NAME}], {NEW_VALUE}
+mov rcx, {NEW_VALUE}
+mov qword [rel {INT_NAME}], rcx

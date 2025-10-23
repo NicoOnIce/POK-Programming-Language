@@ -1,0 +1,4 @@
+mov al, [rel {BYTE_NAME}]       
+mov r10, [rel {OFFSET_NAME}]
+lea r9, [rel {STR_NAME}]    
+mov [r9 + r10], al

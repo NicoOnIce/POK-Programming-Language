@@ -8,43 +8,48 @@ numbers = []
 for i in range(9):
     numbers.append(str(i))
 
+cwd = os.getcwd()+"\\"
+
 functions = {
-    "output": "functions/output",
-    ".data": "functions/.data",
-    ".text": "functions/.text",
-    "consoleHandle": "functions/consoleHandle",
-    "forOutput": "functions/forOutput",
-    "main": "functions/main",
-    "output": "functions/output",
-    "string": "functions/string",
-    "exit": "functions/exit",
-    "undefinedString": "functions/undefinedString",
-    "forInput": "functions/forInput",
-    "inputHandle": "functions/inputHandle",
-    "read": "functions/read",
-    ".bss": "functions/.bss",
-    "dynamicInt": "functions/dynamicInt",
-    ".new": "functions/.new",
-    "run": "functions/run",
-    "ret": "functions/ret",
-    "addition": "functions/addition",
-    "subtraction": "functions/subtraction",
-    "intEqual": "functions/intEqual",
-    "else": "functions/else",
-    "changeResVarInt": "functions/changeResVarInt",
-    "goto": "functions/goto",
-    "match": "functions/match",
-    "callMatch": "functions/callMatch",
-    "int": "functions/int",
-    "user": "functions/user",
-    "application": "functions/application",
-    "bcopy": "functions/bcopy",
-    "byteEqual": "functions/byteEqual",
-    "setUvar": "functions/setUvar",
-    "resByte": "functions/resByte",
-    "changeResVarByte": "functions/changeResVarByte",
-    "resString": "functions/resString",
-    "byte": "functions/byte"
+    "output": cwd+"functions/output",
+    ".data": cwd+"functions/.data",
+    ".text": cwd+"functions/.text",
+    "consoleHandle": cwd+"functions/consoleHandle",
+    "forOutput": cwd+"functions/forOutput",
+    "main": cwd+"functions/main",
+    "output": cwd+"functions/output",
+    "string": cwd+"functions/string",
+    "exit": cwd+"functions/exit",
+    "undefinedString": cwd+"functions/undefinedString",
+    "forInput": cwd+"functions/forInput",
+    "inputHandle": cwd+"functions/inputHandle",
+    "read": cwd+"functions/read",
+    ".bss": cwd+"functions/.bss",
+    "dynamicInt": cwd+"functions/dynamicInt",
+    ".new": cwd+"functions/.new",
+    "run": cwd+"functions/run",
+    "ret": cwd+"functions/ret",
+    "addition": cwd+"functions/addition",
+    "subtraction": cwd+"functions/subtraction",
+    "intEqual": cwd+"functions/intEqual",
+    "else": cwd+"functions/else",
+    "changeResVarInt": cwd+"functions/changeResVarInt",
+    "goto": cwd+"functions/goto",
+    "match": cwd+"functions/match",
+    "callMatch": cwd+"functions/callMatch",
+    "int": cwd+"functions/int",
+    "user": cwd+"functions/user",
+    "application": cwd+"functions/application",
+    "bcopy": cwd+"functions/bcopy",
+    "byteEqual": cwd+"functions/byteEqual",
+    "setUvar": cwd+"functions/setUvar",
+    "resByte": cwd+"functions/resByte",
+    "changeResVarByte": cwd+"functions/changeResVarByte",
+    "resString": cwd+"functions/resString",
+    "byte": cwd+"functions/byte",
+    "scopy": cwd+"functions/scopy",
+    "bset": cwd+"functions/bset",
+    "intGreaterThan": cwd+"functions/bset"
 }
 
 _function_cache =  {}
@@ -82,11 +87,13 @@ def getFunction(function, arguments={}, indents=0):
     return data
 
 def build(buildFile, include):
-    os.system(f"nasm -f win64 {buildFile}.asm -o {buildFile}.obj")
-    os.system(f"gcc {buildFile}.obj -o {buildFile}.exe {include}")
+    # print(buildFile)
+    os.system(f"{cwd}usr\\bin\\nasm.exe -f win64 {buildFile}.asm -o {buildFile}.obj")
+    # print("here")
+    os.system(f"{cwd}gcc\\bin\\gcc.exe {buildFile}.obj -o {buildFile}.exe {include}")
 
     #os.system(f"del {buildFile}.asm")
-    os.system(f"del {buildFile}.obj")
+    # os.system(f"del {buildFile}.obj")
 
 def writeASM(file, data):
     with open(f"{file}.asm", "w") as file:
@@ -157,27 +164,54 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
             strName = ""
             lenName = ""
 
-            if not "::" in parts[1]:
+            if ":" != parts[1][0] and ":" != parts[1][1]:
                 strName = "str_"+str(len(variables["str"]))
                 lenName = "int_"+str(len(variables["int"]))
+
+                extraBytes = ""
+                    
+                newParts = output.split()
+
+                for part in newParts[:]:
+                    if "b::" in part:
+                        extraBytes += f", {part.replace("b::", "")}"
+
+                        newParts.pop(newParts.index(part))
+
+                output = " ".join(newParts)
+
+                # print(extraBytes)
             
                 currentStack[".data"] += getFunction("string", {
                     "STR_NAME": strName, 
                     "VALUE": output,
-                    "LEN_NAME": lenName
+                    "LEN_NAME": lenName,
+                    "BYTES": extraBytes
                 }, 1)+"\n"
 
                 variables["str"].append(strName)
                 variables["int"].append(lenName)
+
+                strName = f"[rel {strName}]"
 
             else:
                 # print(userVariables)
                 # strName = userVariables["str"].keys()[list(userVariables["str"].values()).index(parts[1].replace("::", ""))]
                 # lenName = userVariables["int"].keys()[list(userVariables["int"].values()).index("len"+parts[1].replace("::", ""))]
 
-                strName = userVariables["str"][parts[1].replace("::", "")]
-                lenName = userVariables["int"]["len"+parts[1].replace("::", "")]
-                lenName = f"[rel {lenName}]"
+                parts = line.strip().split(" ")
+                variable = parts[1].replace("::", "")
+
+                if len(parts)-1 >= 2:
+                    lenName = f"[rel {userVariables["int"][parts[2]]}]"
+                else:
+                    lenName = f"{userVariables["int"]["len"+variable]}"
+
+                if variable in userVariables["str"]:
+                    strName = f"[rel {userVariables["str"][variable]}]"
+                else:
+                    strName = f"[rel {userVariables["int"][variable]}]"
+                    lenName = "8"
 
             if embededParse:
                 currentStack[main] += "\n\n"+getFunction("output", {
@@ -203,6 +237,7 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
             case "string":
 
                 if len(parts)-1 >= 3:
+
                     if ".data" not in currentStack:
                         currentStack[".data"] = getFunction(".data")+"\n"
 
@@ -234,16 +269,22 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
 
         match typing:
             case "uvar":
-                if len(parts)-1 >= 4:
+                if len(parts)-1 >= 3:
                     variable = parts[2]
-                    value = f"\"{parts[3]}\""
+                    value = userVariables["str"][parts[3]]
 
                     variable = userVariables["str"][variable]
 
                     if embededParse:
-                        currentStack[main] += getFunction("setUvar", {"VARIABLE_NAME": variable, "VALUE": value})+"\n"
+                        currentStack[main] += getFunction("setUvar", {
+                            "VARIABLE_NAME": variable, 
+                            "NEW_VARIABLE": value
+                        })+"\n"
                     else:
-                        applicationStack[main] += getFunction("setUvar", {"VARIABLE_NAME": variable, "VALUE": value})+"\n"
+                        applicationStack[main] += getFunction("setUvar", {
+                            "VARIABLE_NAME": variable, 
+                            "NEW_VARIABLE": value
+                        })+"\n"
                 else:
                     print(f"WARN -- \"{parts[0]}\" expected 4 or more arguments, but only got {len(parts)} arguments on line {lines.index[baseLine]+1}")
                     sys.exit()
@@ -262,21 +303,59 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                             applicationStack[main] += getFunction("changeResVarByte", {"BYTE_NAME": variable, "NEW_VALUE": value})+"\n"
 
                     elif typing2 == "string":
-                        value = f"\"{parts[4]}\""
+                        value = userVariables["str"][parts[4]]
+
+                        # print(userVariables)
 
                         variable = userVariables["str"][variable]
                         if embededParse:
-                            currentStack[main] += getFunction("setUvar", {"VARIABLE_NAME": variable, "NEW_VALUE": value})+"\n"
+                            # print(variable)
+                            # print(value)
+                            currentStack[main] += getFunction("setUvar", {
+                                "VARIABLE_NAME": variable, 
+                                "NEW_VARIABLE": value
+                            })+"\n"
                         else:
-                            applicationStack[main] += getFunction("setUvar", {"VARIABLE_NAME": variable, "NEW_VALUE": value})+"\n"
+                            # print(variable)
+                            # print(value)
+                            applicationStack[main] += getFunction("setUvar", {
+                                "VARIABLE_NAME": variable, 
+                                "NEW_VARIABLE": value
+                            })+"\n"
                 else:
-                    print(f"WARN -- \"{parts[0]}\" expected 4 or more arguments, but only got {len(parts)} arguments on line {lines.index[baseLine]+1}")
+                    print(f"WARN -- \"{parts[0]}\" expected 4 or more arguments, but only got {len(parts)} arguments on line {lines.index(baseLine)+1}")
                     sys.exit()
 
 
             case _:
                 print(f"WARN -- \"{parts[0]}\" got unexpected TYPINPG argument \"{parts[1]}\" on line {lines.index(baseLine)+1}")
                 sys.exit()
+
+    elif parts[0] == "bset":
+        parts = line.strip().split(" ")
+
+        if len(parts)-1 >= 3:
+            # print(userVariables)
+
+            byteName = userVariables["byte"][parts[1]]
+            stringName = userVariables["str"][parts[2]]
+            offsetName = userVariables["int"][parts[3]]
+
+            if embededParse:
+                currentStack[main] += getFunction("bset", {
+                    "BYTE_NAME": byteName,
+                    "STR_NAME": stringName,
+                    "OFFSET_NAME": offsetName
+                })+"\n"
+            else:
+                applicationStack[main] += getFunction("bset", {
+                    "BYTE_NAME": byteName,
+                    "STR_NAME": stringName,
+                    "OFFSET_NAME": offsetName
+                })+"\n"
+        else:
+            print(f"WARN -- \"{parts[0]}\" expected 3 or more arguments, but only got {len(parts)} arguments on line {lines.index(baseLine)+1}")
+            sys.exit() 
 
     elif parts[0] == "var":
         parts = line.strip().split(" ")
@@ -291,11 +370,26 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                     strName = "str_"+str(len(variables["str"]))
                     lenName = "int_"+str(len(variables["int"]))
                     value = line.strip().split(" ", maxsplit=3)[3]
+                    extraBytes = ""
+                    
+                    newParts = value.split()
+
+                    # print(newParts)
+
+                    for part in newParts[:]:
+                        # print(newParts)
+                        # print(part)
+                        if "b::" in part:
+                            # print("part includes b::")
+                            extraBytes += f", {part.replace("b::", "")}"
+                            newParts.pop(newParts.index(part))
+
+                    value = " ".join(newParts)
 
                     variables["str"].append(strName)
                     variables["int"].append(lenName)
 
-                    currentStack[".data"] += getFunction("string", {"STR_NAME": strName, "VALUE": value, "LEN_NAME":lenName}, indents)+"\n"
+                    currentStack[".data"] += getFunction("string", {"STR_NAME": strName, "VALUE": value, "LEN_NAME":lenName, "BYTES": extraBytes}, indents)+"\n"
 
                     userVariables["str"][parts[2]] = strName
                     userVariables["int"]["len"+parts[2]] = lenName
@@ -370,9 +464,9 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                     stringName = "str_"+str(len(variables["str"]))
                     variables["str"].append(stringName)
                     
-                    valueBytes = parts[3]
+                    valueBytes = parts[2]
 
-                    userVariables["str"][parts[2]] = stringName
+                    userVariables["str"][parts[3]] = stringName
 
                     currentStack[".bss"] += getFunction("resString", {"STRING_NAME": stringName, "BYTES": valueBytes})+"\n"
 
@@ -385,8 +479,14 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
     elif parts[0] == "cresvar":
         parts = line.strip().split(" ")
         if len(parts)-1 >= 2:
-            intName = userVariables[parts[1]]
-            applicationStack[main] += getFunction("changeResVarInt", {"INT_NAME": intName, "NEW_VALUE": parts[2]}, indents)+"\n"
+            if embededParse:
+                intName = userVariables["int"][parts[1]]
+                value = f"[rel {userVariables["int"][parts[2]]}]"
+                currentStack[main] += getFunction("changeResVarInt", {"INT_NAME": intName, "NEW_VALUE": value}, indents)+"\n"
+            else:
+                intName = userVariables["int"][parts[1]]
+                value = f"[rel {userVariables["int"][parts[2]]}]"
+                applicationStack[main] += getFunction("changeResVarInt", {"INT_NAME": intName, "NEW_VALUE": value}, indents)+"\n"
         else:
             print(f"WARN -- \"{parts[0]}\" expected 2 or more arguments, but only got {len(parts)} arguments on line {lines.index(baseLine)}")
             sys.exit()
@@ -395,7 +495,7 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
         parts = line.strip().split(" ")
         if len(parts)-1 >= 3:
             if embededParse:
-                sourceVariable = parts[1]
+                sourceVariable = parts[2]
 
                 if sourceVariable in userVariables["str"]:
                     sourceVariable = userVariables["str"][parts[2]]
@@ -415,7 +515,7 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                 }, indents)+"\n"
             else:
 
-                sourceVariable = parts[1]
+                sourceVariable = parts[2]
 
                 if sourceVariable in userVariables["str"]:
                     sourceVariable = userVariables["str"][parts[2]]
@@ -432,6 +532,48 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                     "SOURCE_NAME": sourceVariable, 
                     "DESTINTION_NAME": destinationVariable, 
                     "OFFSET": offset
+                }, indents)+"\n"
+        else:
+            print(f"WARN -- \"{parts[0]}\" expected 3 or more arguments, but only got {len(parts)} arguments on line {lines.index(baseLine)}")
+            sys.exit() 
+
+    elif parts[0] == "scopy":
+        parts = line.strip().split(" ")
+        if len(parts)-1 >= 3:
+            if embededParse:
+                sourceVariable = parts[2]
+
+                if sourceVariable in userVariables["str"]:
+                    sourceVariable = userVariables["str"][parts[2]]
+                else:
+                    print(f"WARN -- \"{parts[0]}\" expected string but got something else on line {lines.index(baseLine)+1}")
+                    sys.exit()
+
+                destinationVariable = userVariables["str"][parts[1]]
+                sourceLength = userVariables["int"][parts[3]]
+
+                currentStack[main] += getFunction("scopy", {
+                    "SOURCE_NAME": sourceVariable, 
+                    "DESTINTION_NAME": destinationVariable, 
+                    "SOURCE_LENGTH": sourceLength
+                }, indents)+"\n"
+            else:
+
+                sourceVariable = parts[2]
+
+                if sourceVariable in userVariables["str"]:
+                    sourceVariable = userVariables["str"][parts[2]]
+                else:
+                    print(f"WARN -- \"{parts[0]}\" expected string but got something else on line {lines.index(baseLine)+1}")
+                    sys.exit()
+
+                destinationVariable = userVariables["str"][parts[1]]
+                offset = userVariables["int"][parts[3]]
+
+                applicationStack[main] += getFunction("scopy", {
+                    "SOURCE_NAME": sourceVariable, 
+                    "DESTINTION_NAME": destinationVariable, 
+                    "SOURCE_LENGTH": offset
                 }, indents)+"\n"
         else:
             print(f"WARN -- \"{parts[0]}\" expected 3 or more arguments, but only got {len(parts)} arguments on line {lines.index(baseLine)}")
@@ -502,6 +644,31 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                 applicationStack["."+subroutineName] = getFunction(".new", {"NAME": subroutineName})+"\n"
                 mains.append("."+subroutineName)
 
+            case "i>":
+                if not value1 in numbers:
+                    value1 = f"[rel {userVariables["int"][value1]}]"
+                
+                if not value2 in numbers:
+                    value2 = f"[rel {userVariables["int"][value2]}]"
+
+                if embededParse:
+                    currentStack[main] += getFunction("intGreater", {
+                        "INT_NAME1": value1,
+                        "INT_NAME2": value2,
+                        "SUBROUTINE_NAME": f".{subroutine}"
+                    })+"\n"
+                else:
+                    applicationStack[main] += getFunction("intGreater", {
+                        "INT_NAME1": value1,
+                        "INT_NAME2": value2,
+                        "SUBROUTINE_NAME": "main."+subroutine
+                    })+"\n"
+
+                subroutineName = f"after_{subroutine}"
+
+                applicationStack["."+subroutineName] = getFunction(".new", {"NAME": subroutineName})+"\n"
+                mains.append("."+subroutineName)
+
     elif parts[0] == "finish":
         currentStack[main] += getFunction("run", {"FUNCTION_NAME": "application"+mains[-1]}, indents)+"\n"
 
@@ -519,9 +686,6 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
             currentStack[main] += getFunction("exit", indents=indents)+"\n"
         else:
             applicationStack[main] += getFunction("exit", indents=indents)+"\n"
-    
-    elif parts[0] == "end":
-        currentStack[main] += getFunction("ret", indents=indents)+"\n"
 
     elif parts[0] == "add":
         parts = line.strip().split(" ")
@@ -557,8 +721,8 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                     currentStack[".data"] += getFunction("int", {"INT_NAME": "true", "VALUE": "1"}, 1)+"\n"
                     currentStack[".data"] += getFunction("int", {"INT_NAME": "false", "VALUE": "0"}, 1)+"\n"
 
-                    currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "btrue", "VALUE": "1"}, 1)+"\n"
-                    currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "bfalse", "VALUE": "0"}, 1)+"\n"
+                    currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "btrue", "VALUE": "'1'"}, 1)+"\n"
+                    currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "bfalse", "VALUE": "'0'"}, 1)+"\n"
 
                     userVariables["int"]["true"] = "true"
                     userVariables["int"]["false"] = "false"
@@ -566,13 +730,15 @@ def parseLine(parts:list, line:str, baseLine:str, lines:list, indents:int, main:
                     userVariables["byte"]["btrue"] = "btrue"
                     userVariables["byte"]["bfalse"] = "bfalse"
 
-                case "null":
+                case "bytes":
                     if not ".data" in currentStack:
                         currentStack[".data"] = getFunction(".data")+"\n"
 
                     currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "null", "VALUE": "0"}, 1)+"\n"
+                    currentStack[".data"] += getFunction("byte", {"BYTE_NAME": "start", "VALUE": "13"}, 1)+"\n"
 
                     userVariables["byte"]["null"] = "null"
+                    userVariables["byte"]["start"] = "start"
 
                 case _:
                     print(f"WARN -- \"{parts[1]}\" is not a valid option of \"{parts[0]}\". occured on line {lines.index(baseLine)}")

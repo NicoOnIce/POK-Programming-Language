@@ -1,0 +1,3 @@
+mov rax, qword {INT_NAME1}
+cmp rax, qword {INT_NAME2}
+jg {SUBROUTINE_NAME}

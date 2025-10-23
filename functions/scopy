@@ -1,0 +1,4 @@
+lea rsi, [rel {SOURCE_NAME}]
+lea rdi, [rel {DESTINTION_NAME}]
+mov rcx, [rel {SOURCE_LENGTH}]
+rep movsb
