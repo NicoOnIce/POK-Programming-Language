@@ -1,8 +1,8 @@
-# POK Coding Language
+# POK Coding Language - Closer to the Core
 
-pok (Primitive Operations Kit) is a simple, lightweight coding language made for quick development of simple console based applications!
+pok (Primitive Operations Kit) is a simple, lightweight coding language made for the development of console based applications!
 
-Although pok is similar to ASM, that doesnt mean you have to lose your sanity by coding with it; pok manages the moving of bytes in order to run operations, but is flexible and light weight. pok, unlike most coding languages, does not include many functions, which are taken for granted, such as there not being a native way to check if two strings match. But thats the beauty, you can code your own division, multiplicaation, your own everything! Nothing is, set in stone and everything can be done your own way.
+Although pok is similar to ASM, that doesnt mean you have to lose your sanity, when using it. pok manages the moving of bytes in order to run operations, but is flexible enough for high levels of control over meomry. pok, unlike most coding languages, does not include many high level function. There is no native way to check if two strings match. But thats the beauty, you can code your own arithmatic functions, logical checks, your own everything! Nothing is set in stone and everything can be done your own way.
 
 
 ## Overview
@@ -11,7 +11,7 @@ Although pok is similar to ASM, that doesnt mean you have to lose your sanity by
 
 ###### How does pok work?
 
-The compiler.py file, tokenizes the .pok file, which has been input to the application. After this, it translates the tokenized code into 64-bit ASM code and creates an .obj file of it using nasm. To build the final product into an exe, GCC is used as the linker.
+The compiler.py file, tokenizes your .pok code. Then, it translates the tokenized code into 64-bit ASM code and creates an .obj file using NASM. To build the final product into an exe, GCC is used as the linker. This only works on Windows.
 
 
 
@@ -23,7 +23,8 @@ NASM 64-bit compatible, GCC 64-bit compatible, Python 1.14+ (python will be remo
 
 ## My Goal
 
-Originally, this started out as a project meant to help me learn some 64-bit ASM, but it has become more than just that to me now. When the language is finished, I hope to code a compiler for the language... in the language! If this goes well, in the further future, I hope to make a simple operating system with it (Mainly just mess about with making my own I/O).
+Originally, this was just a project where I could mess about with ASM, but it has turned into so much more than that. I am reaching a point with the language where few things are missing for the development of a full compiler made solely of POK code. Thats the goal. Make a simple, yet robust, language with the control of ASM but readability of any other low-level language.
+
 
 
 
